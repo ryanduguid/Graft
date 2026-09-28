@@ -37,9 +37,8 @@ RUN npm pkg delete scripts.prepare scripts.postinstall && npm ci
 COPY . .
 RUN node scripts/postinstall.mjs && npm run prepare
 
-# node 22, not 20: commander@15 declares `node >=22.12`, and running under 20
-# left `npm ci` warning EBADENGINE on every build. The runtime base must match
-# the build base — the native bindings compiled above are copied, not rebuilt.
+# Match the build stage's Node 22 base: native bindings are copied into this
+# image without being rebuilt.
 FROM node:22-bookworm-slim
 # git is a runtime dependency here, not a build one: the App fetches each pull
 # request's merge ref.

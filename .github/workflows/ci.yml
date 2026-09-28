@@ -52,7 +52,7 @@ jobs:
       # Node 20 this matrix pins, since 13.x requires >=22.22. Don't drop node-gyp
       # from devDependencies, and don't bump it past 12.x without moving Node first.
       - name: Install dependencies
-        run: npm ci
+        run: npm ci --engine-strict
 
       - name: Test
         run: npm test
