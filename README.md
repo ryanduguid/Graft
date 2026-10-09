@@ -185,11 +185,14 @@ Graft builds the graph in two passes, both powered by a language model:
 
 ```mermaid
 flowchart LR
+%%{init: {"theme": "base", "look": "classic", "themeVariables": {"background": "#000000", "primaryColor": "#66023C", "primaryTextColor": "#FFFFF0", "primaryBorderColor": "#FFFFF0", "lineColor": "#000000", "textColor": "#FFFFF0", "edgeLabelBackground": "#000000", "clusterBkg": "#000000", "clusterBorder": "#FFFFF0", "titleColor": "#FFFFF0"}, "themeCSS": ".flowchart-link, .relationshipLine, marker path { filter: drop-shadow(0px 1px 0px #FFFFF0) drop-shadow(0px -1px 0px #FFFFF0) drop-shadow(1px 0px 0px #FFFFF0) drop-shadow(-1px 0px 0px #FFFFF0); }"}}%%
     S[Source files] --> T["Tier 1 — tree-sitter<br/>no model, no key"]
     S --> P1["Pass 1 — LLM summarizes<br/>each file (--deep)"]
     T --> W["graft/.graph/wiring.json<br/>per-symbol code graph"]
     P1 --> P2["Pass 2 — group into nodes<br/>+ typed links"]
     P2 --> N["graft/*.md<br/>markdown node graph"]
+    style W fill:#7851A9,stroke:#FFFFF0,stroke-width:2px,color:#FFFFF0
+    style N fill:#7851A9,stroke:#FFFFF0,stroke-width:2px,color:#FFFFF0
 ```
 
 Every pass is cached by content hash — the LLM ones and the tree-sitter parse alike. Re-running only touches the files that changed, so the second build is fast and cheap (on this repo, 124 files: 0.74s cold, 0.18s after one edited file, 0.18s with nothing changed). `graft build --no-reuse` forces a cold re-parse.
