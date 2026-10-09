@@ -31,6 +31,11 @@
 
 </div>
 
+**Fork status**
+
+[![Fork code quality](https://app.codacy.com/project/badge/Grade/63ab68177c924303a16ef0d6a2b2dd54?branch=main)](https://app.codacy.com/gh/ryanduguid/Graft/dashboard)
+[![Fork CI](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml)
+
 <p align="center">
   <b>Stop repeating yourself to your coding agent.</b><br/>
   You correct it, and by the next session it has forgotten. Trail manages your CLAUDE.md and AGENTS.md so it doesn't.
