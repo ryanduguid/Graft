@@ -191,8 +191,8 @@ flowchart LR
     T --> W["graft/.graph/wiring.json<br/>per-symbol code graph"]
     P1 --> P2["Pass 2 — group into nodes<br/>+ typed links"]
     P2 --> N["graft/*.md<br/>markdown node graph"]
-    style W fill:#7851A9,stroke:#FFFFF0,stroke-width:2px,color:#FFFFF0
-    style N fill:#7851A9,stroke:#FFFFF0,stroke-width:2px,color:#FFFFF0
+    style W fill:#990024,stroke:#FFFFF0,stroke-width:2px,color:#FFFFF0
+    style N fill:#990024,stroke:#FFFFF0,stroke-width:2px,color:#FFFFF0
 ```
 
 Every pass is cached by content hash — the LLM ones and the tree-sitter parse alike. Re-running only touches the files that changed, so the second build is fast and cheap (on this repo, 124 files: 0.74s cold, 0.18s after one edited file, 0.18s with nothing changed). `graft build --no-reuse` forces a cold re-parse.
