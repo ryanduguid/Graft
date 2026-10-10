@@ -653,5 +653,5 @@ function resolveGoImport(spec: string, modules: GoModule[], filesByDir: Map<stri
   const dir = posix.normalize(posix.join(best.mod.dir, best.subpath));
   const files = filesByDir.get(dir);
   if (!files || files.length === 0) return spec;
-  return [...files].sort()[0];
+  return [...files].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))[0];
 }

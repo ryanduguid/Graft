@@ -97,7 +97,7 @@ function renderCard(
   conceptSlugs: string[],
 ): string {
   const uplinks = conceptSlugs
-    .sort()
+    .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
     .map((s) => `[[${s}]]`)
     .join(" ");
   const head = uplinks ? `# ${sourcePath} · ${uplinks}` : `# ${sourcePath}`;
@@ -299,7 +299,7 @@ export function writeCovers(graph: GraphV1, outDir: string): number {
       : [];
 
     const covers: CoverRef[] = [];
-    for (const path of [...new Set(sources.map((s) => s.path ?? ""))].sort()) {
+    for (const path of [...new Set(sources.map((s) => s.path ?? ""))].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))) {
       for (const n of symbolsByPath.get(path) ?? []) {
         covers.push({ symbol: n.name, kind: n.kind, at: `${n.path}:${n.span}` });
       }

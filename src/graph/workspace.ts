@@ -85,7 +85,7 @@ export function writeWorkspace(root: string, ws: WorkspaceV1, override?: string)
   const dir = contextDirFor(root, override);
   mkdirSync(dir, { recursive: true });
   const path = join(dir, WORKSPACE_FILE);
-  const sorted: WorkspaceV1 = { version: 1, children: [...ws.children].sort() };
+  const sorted: WorkspaceV1 = { version: 1, children: [...ws.children].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)) };
   writeFileSync(path, JSON.stringify(sorted, null, 2) + "\n");
   return path;
 }
@@ -144,7 +144,7 @@ export interface WorkspaceGraphs {
  * `missing`, not dropped. */
 export function loadWorkspaceGraphs(root: string, override?: string): WorkspaceGraphs {
   const ws = readWorkspace(root, override);
-  const children = (ws ? ws.children : discoverWorkspaceChildren(root)).slice().sort();
+  const children = (ws ? ws.children : discoverWorkspaceChildren(root)).slice().sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   const loaded: LoadedChild[] = [];
   const missing: string[] = [];
   for (const child of children) {
@@ -254,7 +254,7 @@ export function federateAsk(
   if (opts.in) {
     const prefix = opts.in.replace(/\/+$/, "");
     const [name, ...rest] = prefix.split("/");
-    const allChildren = [...wg.loaded.map((l) => l.child), ...wg.missing].sort();
+    const allChildren = [...wg.loaded.map((l) => l.child), ...wg.missing].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
     if (!allChildren.includes(name)) {
       throw new Error(`no workspace repo "${name}" - repos: ${allChildren.join(", ")}`);
     }
@@ -712,7 +712,7 @@ export async function splitWorkspace(
   buildChild: (childDir: string, childName: string) => Promise<void>,
   onStart?: (info: { children: string[]; migrated: boolean }) => void,
 ): Promise<{ children: string[]; migrated: boolean }> {
-  const children = discoverWorkspaceChildren(root).slice().sort();
+  const children = discoverWorkspaceChildren(root).slice().sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   const migrated = hasMegaGraph(root, override);
   onStart?.({ children, migrated });
   for (const child of children) await buildChild(join(root, child), child);

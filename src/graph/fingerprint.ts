@@ -189,8 +189,8 @@ export function probeDrift(root: string, outDir: string): Drift | null {
     if (!seen.has(rel)) drift.removed.push(rel);
   }
 
-  drift.changed.sort();
-  drift.added.sort();
-  drift.removed.sort();
+  drift.changed.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  drift.added.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  drift.removed.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   return drift;
 }
