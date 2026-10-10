@@ -70,7 +70,7 @@
 - [Agent integration](#agent-integration) — [MCP server](#mcp-server) · [Claude Code (deep integration)](#claude-code-deep-integration)
 - [CLI](#cli)
 - [Search & orient](#search--orient-graft-grep--graft-map) (`graft grep` / `graft map`)
-- [Monorepos & multi-repo folders](#monorepos--multi-repo-folders)
+- [Monorepos & multi-repo folders](#monorepos-submodules--multi-repo-folders)
 - [Visualize it](#visualize-it-graft-viz) (`graft viz`)
 - [Tested on your popular repos](#tested-on-your-popular-repos)
 - [Development](#development)
