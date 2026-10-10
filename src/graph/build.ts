@@ -303,7 +303,7 @@ export async function buildGraph(
       version: 1,
       nodeCount: nodes.length,
       edgeCount: edges.length,
-      languages: [...langs].sort(),
+      languages: [...langs].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)),
       scopes,
     },
     nodes,
@@ -403,7 +403,7 @@ export async function buildGraph(
     edges: edges.length,
     byKind,
     byRelation,
-    languages: [...langs].sort(),
+    languages: [...langs].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)),
     meaning,
     errors,
   };

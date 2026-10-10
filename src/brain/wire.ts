@@ -61,7 +61,7 @@ export function renderBrainSection(rules: BrainRule[], repoLabel: string): strin
   for (const r of general) lines.push(`- ${r.rule}${r.sourceUrl ? ` (${r.sourceUrl})` : ''}`);
   if (general.length) lines.push('');
 
-  for (const [file, group] of [...byFile].filter(([f]) => f !== '').sort()) {
+  for (const [file, group] of [...byFile].filter(([f]) => f !== '').sort((a, b) => (a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : 0))) {
     lines.push(`### ${file}`);
     for (const r of group) lines.push(`- ${r.rule}${r.sourceUrl ? ` (${r.sourceUrl})` : ''}`);
     lines.push('');

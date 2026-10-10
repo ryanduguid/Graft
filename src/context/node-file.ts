@@ -98,7 +98,7 @@ export function slugify(name: string): string {
 export function digestSources(sources: SourceRef[]): string {
   const lines = sources
     .map((s) => `${s.path}:${s.hash}`)
-    .sort()
+    .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
     .join("\n");
   return contentHash(lines);
 }
