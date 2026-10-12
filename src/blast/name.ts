@@ -151,7 +151,7 @@ export function sanitize(raw: string): string {
  * comparable — the failure the cache exists to prevent.
  */
 export function clusterHash(files: string[], hashes: Map<string, string>): string {
-  const parts = [...files].sort().map((f) => `${f}:${hashes.get(f) ?? "?"}`);
+  const parts = [...files].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).map((f) => `${f}:${hashes.get(f) ?? "?"}`);
   return createHash("sha256").update(parts.join("\n")).digest("hex").slice(0, 16);
 }
 

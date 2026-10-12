@@ -397,7 +397,7 @@ function batchKey(batch: FileSummary[], hashByPath: Map<string, string>): string
   return contentHash(
     batch
       .map((f) => `${f.path}:${hashByPath.get(f.path) ?? ""}`)
-      .sort()
+      .sort((a, b) => (a < b ? -1 : a > b ? 1 : 0))
       .join("\n"),
   );
 }

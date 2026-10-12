@@ -135,7 +135,7 @@ function sortedLanguages(paths: string[]): string[] {
     const label = languageLabelOf(p);
     if (label) set.add(label);
   }
-  return [...set].sort();
+  return [...set].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 }
 
 /**

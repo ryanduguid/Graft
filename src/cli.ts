@@ -1103,7 +1103,7 @@ async function runInitCommand(dir: string, opts: InitOptions, how: { epilogue?: 
     // Sorted so `claude,cursor` and `cursor,claude` aggregate as one value.
     track(
       "init_completed",
-      { agents: [...ids].sort().join(","), consent: consent === undefined ? "unasked" : String(consent) },
+      { agents: [...ids].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).join(","), consent: consent === undefined ? "unasked" : String(consent) },
       { repo },
     );
 }

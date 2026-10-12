@@ -363,9 +363,9 @@ function changedAreas(
     const concept = sharedConcept(area.files, index);
     area.label = concept ?? hubLabel(area.seedNames, area.key);
     area.labelSource = concept ? "concept" : "symbol";
-    area.files.sort();
-    area.testFiles.sort();
-    area.changedTestFiles.sort();
+    area.files.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    area.testFiles.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    area.changedTestFiles.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
     area.tests =
       area.behavioural === 0 ? "na"
       : area.changedTestFiles.length > 0 ? "changed"
@@ -478,8 +478,8 @@ function groupByModule(
   for (const mod of byKey.values()) {
     const from = new Set<string>();
     for (const s of mod.symbols) for (const p of origins.get(s.id) ?? []) from.add(p);
-    mod.from = [...from].sort();
-    mod.files.sort();
+    mod.from = [...from].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+    mod.files.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
     mod.symbols.sort((a, b) => a.depth - b.depth || a.path.localeCompare(b.path));
     // Shallowest symbol first after that sort, so it is the cluster's hub: the
     // thing one hop from the diff rather than an arbitrary member.

@@ -133,7 +133,7 @@ function git(root: string, args: string[]): string | null {
  * cost to graft.
  */
 export function ownersFor(root: string, files: string[], opts: OwnerOptions = {}): Owner[] {
-  const paths = [...files].sort().slice(0, MAX_PATHSPEC);
+  const paths = [...files].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).slice(0, MAX_PATHSPEC);
   if (paths.length === 0) return [];
 
   const now = opts.now ?? Date.now();

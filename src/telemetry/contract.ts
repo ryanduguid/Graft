@@ -231,5 +231,5 @@ export function langsValue(langs: readonly string[]): string {
   const clean = langs
     .map((l) => l.toLowerCase().trim())
     .filter((l) => l.length > 0 && l.length <= 24 && /^[a-z0-9+#._-]+$/.test(l));
-  return [...new Set(clean)].sort().slice(0, 8).join(',');
+  return [...new Set(clean)].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).slice(0, 8).join(',');
 }

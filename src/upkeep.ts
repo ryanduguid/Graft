@@ -249,7 +249,7 @@ export function writeStamp(
   try {
     writeJsonAtomic(stampPath(repo), {
       version,
-      hosts: [...hosts].sort(),
+      hosts: [...hosts].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)),
       opts: { ...DEFAULT_WIRING_OPTS, ...opts },
       at,
     } satisfies WiringStamp);
@@ -312,7 +312,7 @@ export function reconcileWiring(
     // merge, or clobbered by another tool — is silently dropped from every future
     // refresh, and that file is precisely what a refresh exists to restore.
     const onDisk = (deps.wired ?? wiredHostIds)(repo);
-    const hosts = [...new Set([...(stamp?.hosts ?? []), ...onDisk])].sort();
+    const hosts = [...new Set([...(stamp?.hosts ?? []), ...onDisk])].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
     if (hosts.length === 0) return null; // never wired here — not our business
     const opts = wiringOpts(stamp);
     deps.rewrite(repo, hosts, opts);

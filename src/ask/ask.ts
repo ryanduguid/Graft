@@ -719,7 +719,7 @@ function lexical(
     let collapsedComponentById: Map<string, ScopeRankCandidate> | undefined;
     let collapsedFileByRepresentative: Map<string, RankedFile> | undefined;
     const fusion = rankScopesAndFuse(
-      [...byScope.keys()].sort(),
+      [...byScope.keys()].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)),
       {
         lex: (s) => {
           const docs = byScope.get(s)!;
@@ -1446,7 +1446,7 @@ export function skeleton(dir: string, file: string, opts: { contextDir?: string 
       graph.nodes.filter((n) => n.path === file || n.path.endsWith(`/${file}`)).map((n) => n.path),
     );
     if (matches.size > 1)
-      return { file, entries: [], note: `ambiguous — matches: ${[...matches].sort().join(", ")}` };
+      return { file, entries: [], note: `ambiguous — matches: ${[...matches].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0)).join(", ")}` };
     const [path] = matches;
     if (path) defs = graph.nodes.filter((n) => n.kind !== "file" && n.path === path);
   }

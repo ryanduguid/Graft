@@ -283,7 +283,7 @@ function gitVisibleFiles(
   }
 
   state.activeRoots.delete(rootKey);
-  return [...out].sort();
+  return [...out].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 }
 
 /** The historical, non-recursive Git path. Kept separate so the default does

@@ -152,7 +152,7 @@ export async function checkGraph(
   }
 
   for (const arr of [result.added, result.removed, result.changed, result.stale, result.pendingIds]) {
-    arr.sort();
+    arr.sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
   }
 
   result.ok =
