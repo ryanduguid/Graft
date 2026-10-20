@@ -7,17 +7,17 @@
 <a href="https://trendshift.io/repositories/92209?utm_source=trendshift-badge&utm_medium=badge&utm_campaign=badge-trendshift-92209" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/trendshift/repositories/92209/daily?language=TypeScript" alt="trailhq/Graft | Trendshift" width="250" height="55"/></a>
 
 <p>
-  <a href="https://github.com/NanoNets/Graft"><img src="https://img.shields.io/github/stars/NanoNets/Graft?style=for-the-badge&logo=github&logoColor=white&label=Star%20on%20GitHub&color=FFC83D" /></a>
-  <a href="https://trailhq.com/graft"><img src="https://img.shields.io/badge/website-trailhq.com/graft-E5484D?style=for-the-badge" /></a>
-  <a href="https://discord.gg/zxmKweAA29"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=for-the-badge&logo=discord&logoColor=white" /></a>
-  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/v/%40nanonets%2Fgraft?style=for-the-badge&logo=npm&logoColor=white&label=npm" /></a>
-  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/dm/%40nanonets%2Fgraft?style=for-the-badge&logo=npm&logoColor=white&label=downloads" /></a>
-  <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/%40nanonets%2Fgraft?style=for-the-badge&logo=nodedotjs&logoColor=white" /></a>
-  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/License-MIT-20C997?style=for-the-badge" />
-  <a href="TELEMETRY.md"><img src="https://img.shields.io/badge/telemetry-anonymous%2C%20opt--out-546FFF?style=for-the-badge" /></a>
-  <a href="https://scorecard.dev/viewer/?uri=github.com/NanoNets/Graft"><img src="https://img.shields.io/ossf-scorecard/github.com/NanoNets/Graft?style=for-the-badge&label=openssf%20scorecard" /></a>
-  <a href="https://app.trailhq.com/get-started?step=repo"><img src="https://img.shields.io/badge/Trail-try%20it-E5484D?style=for-the-badge&logoColor=white" /></a>
+  <a href="https://github.com/NanoNets/Graft"><img src="https://img.shields.io/github/stars/NanoNets/Graft?style=flat&logo=github&logoColor=E5E4E2&label=Star%20on%20GitHub&color=66023C&labelColor=000000" /></a>
+  <a href="https://trailhq.com/graft"><img src="https://img.shields.io/badge/website-trailhq.com/graft-E5484D?style=flat&labelColor=000000&color=66023C" /></a>
+  <a href="https://discord.gg/zxmKweAA29"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=flat&logo=discord&logoColor=E5E4E2&labelColor=000000&color=66023C" /></a>
+  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/v/%40nanonets%2Fgraft?style=flat&logo=npm&logoColor=E5E4E2&label=npm&labelColor=000000&color=66023C" /></a>
+  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/dm/%40nanonets%2Fgraft?style=flat&logo=npm&logoColor=E5E4E2&label=downloads&labelColor=000000&color=66023C" /></a>
+  <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/%40nanonets%2Fgraft?style=flat&logo=nodedotjs&logoColor=E5E4E2&labelColor=000000&color=66023C" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat&logo=typescript&logoColor=E5E4E2&labelColor=000000&color=66023C" />
+  <img src="https://img.shields.io/badge/License-MIT-20C997?style=flat&labelColor=000000&color=66023C" />
+  <a href="TELEMETRY.md"><img src="https://img.shields.io/badge/telemetry-anonymous%2C%20opt--out-546FFF?style=flat&labelColor=000000&color=66023C" /></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/NanoNets/Graft"><img src="https://img.shields.io/ossf-scorecard/github.com/NanoNets/Graft?style=flat&label=openssf%20scorecard&labelColor=000000" /></a>
+  <a href="https://app.trailhq.com/get-started?step=repo"><img src="https://img.shields.io/badge/Trail-try%20it-E5484D?style=flat&logoColor=white&labelColor=000000&color=66023C" /></a>
 </p>
 
 ### Up to **4× cheaper** and **3× faster**, with better or no loss of correctness.
@@ -33,8 +33,8 @@
 
 **Fork status**
 
-[![Fork code quality](https://app.codacy.com/project/badge/Grade/63ab68177c924303a16ef0d6a2b2dd54?branch=main)](https://app.codacy.com/gh/ryanduguid/Graft/dashboard)
-[![Fork CI](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml)
+[![Fork code quality](https://img.shields.io/codacy/grade/63ab68177c924303a16ef0d6a2b2dd54/main?style=flat&labelColor=000000)](https://app.codacy.com/gh/ryanduguid/Graft/dashboard)
+[![Fork CI](https://img.shields.io/github/actions/workflow/status/ryanduguid/Graft/ci.yml?branch=main&label=CI&style=flat&labelColor=000000)](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml)
 
 <p align="center">
   <b>Stop repeating yourself to your coding agent.</b><br/>
@@ -47,7 +47,7 @@
 </p>
 
 <p align="center">
-  <a href="https://app.trailhq.com/get-started?step=repo"><img src="https://img.shields.io/badge/Try%20it%20on%20your%20repo%20%E2%86%92-E5484D?style=for-the-badge" alt="Try it on your repo" height="34"/></a>
+  <a href="https://app.trailhq.com/get-started?step=repo"><img src="https://img.shields.io/badge/Try%20it%20on%20your%20repo%20%E2%86%92-E5484D?style=flat&labelColor=000000&color=66023C" alt="Try it on your repo" height="34"/></a>
 </p>
 
 <p align="center">
