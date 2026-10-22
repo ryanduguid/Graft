@@ -33,8 +33,12 @@
 
 **Fork status**
 
+<div align="center">
+
 [![Fork code quality](https://img.shields.io/codacy/grade/63ab68177c924303a16ef0d6a2b2dd54/main?style=flat&labelColor=000000)](https://app.codacy.com/gh/ryanduguid/Graft/dashboard)
 [![Fork CI](https://img.shields.io/github/actions/workflow/status/ryanduguid/Graft/ci.yml?branch=main&label=CI&style=flat&labelColor=000000)](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml)
+
+</div>
 
 <p align="center">
   <b>Stop repeating yourself to your coding agent.</b><br/>
