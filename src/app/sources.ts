@@ -69,6 +69,26 @@ function filesIn(root: string, rel: string, test: (name: string) => boolean): st
   }
 }
 
+const AGENT_INSTRUCTION_FILES = [
+  "CLAUDE.md",
+  "AGENTS.md",
+  "GEMINI.md",
+  ".github/copilot-instructions.md",
+  ".windsurf/rules/graft.md",
+];
+const CURSOR_RULES_DIR = ".cursor/rules";
+const isCursorRule = (name: string): boolean => name.endsWith(".mdc") || name.endsWith(".md");
+
+/** Whether repo-relative `rel` is one of the instruction files
+ * {@link readAgentInstructions} reads, in either separator style. */
+export function isAgentInstructionPath(rel: string): boolean {
+  const posix = rel.replace(/\\/g, "/");
+  if (AGENT_INSTRUCTION_FILES.includes(posix)) return true;
+  const name = posix.startsWith(`${CURSOR_RULES_DIR}/`) ? posix.slice(CURSOR_RULES_DIR.length + 1) : "";
+  // No `:` either: on NTFS `rule.md:x.md` names an alternate data stream, not a file.
+  return name !== "" && !name.includes("/") && !name.includes(":") && isCursorRule(name);
+}
+
 /**
  * Instruction files the team already wrote for coding agents.
  *
@@ -80,14 +100,7 @@ function filesIn(root: string, rel: string, test: (name: string) => boolean): st
  * the same file — a loop that fills the rulebook with itself.
  */
 export function readAgentInstructions(root: string): HistorySource[] {
-  const candidates = [
-    "CLAUDE.md",
-    "AGENTS.md",
-    "GEMINI.md",
-    ".github/copilot-instructions.md",
-    ".windsurf/rules/graft.md",
-    ...filesIn(root, ".cursor/rules", (n) => n.endsWith(".mdc") || n.endsWith(".md")),
-  ];
+  const candidates = [...AGENT_INSTRUCTION_FILES, ...filesIn(root, CURSOR_RULES_DIR, isCursorRule)];
   const out: HistorySource[] = [];
   for (const rel of candidates) {
     const text = stripManagedBlocks(readText(root, rel) ?? "");

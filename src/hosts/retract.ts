@@ -35,6 +35,7 @@ import { claudeGlobalTargets } from './claude-global.js';
 import { claudeTargets } from '../claude/init.js';
 import { isGraftAllowEntry, isGraftFooterRegex } from '../claude/settings-merge.js';
 import type { WriteScope } from './plan.js';
+import { resolveInside } from '../util/safe-fs.js';
 
 /** What a retraction did to one target. */
 export type RetractAction =
@@ -300,8 +301,15 @@ function stripCodexHooks(path: string, apply: boolean): RetractAction {
  * Both are written as a comment line plus entries; the comment is graft's own
  * wording, so it identifies the block. Entries are matched individually too, so
  * a hand-tidied file (comment deleted, entry kept) still retracts cleanly.
+ * A symlinked one is never edited through the link: build never writes to one,
+ * so nothing of graft's is there.
  */
 function stripIgnoreEntries(path: string, entries: RegExp[], apply: boolean): RetractAction {
+  try {
+    resolveInside(dirname(path), path);
+  } catch {
+    return 'absent';
+  }
   if (!existsSync(path)) return 'absent';
   const text = readFileSync(path, 'utf8');
   const kept = text

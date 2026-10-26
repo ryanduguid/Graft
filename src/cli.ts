@@ -32,7 +32,7 @@ import {
 import type { HistoryThread } from "./app/history.js";
 import { readLink, writeLink } from "./brain/link.js";
 import { withLegacyNames } from "./legacy-args.js";
-import { applyChanges, fetchAcceptedChanges, markApplied } from "./brain/claude-md.js";
+import { applyChanges, fetchAcceptedChanges, markApplied, pullTarget } from "./brain/claude-md.js";
 import { watchBuild } from "./brain/watch.js";
 import { openBrowser, signupUrl, startHandoff } from "./brain/signup.js";
 import { contextDirFor } from "./context/node-file.js";
@@ -736,12 +736,13 @@ program
     const { resolve, basename } = await import("node:path");
     const { spawn } = await import("node:child_process");
     const { fileURLToPath } = await import("node:url");
-    const { contextDirFor } = await import("./context/node-file.js");
+    const { assertRealContextDir, contextDirFor } = await import("./context/node-file.js");
     const { startVizServer } = await import("./viz/serve.js");
 
     const root = resolve(dir);
     const globalOpts = program.opts<{ dir?: string }>();
     const contextDir = contextDirFor(root, globalOpts.dir);
+    assertRealContextDir(root, contextDir); // never serve or export through a symlinked context dir
     if (!existsSync(contextDir)) {
       console.error(`✗ no context graph at ${contextDir} — run \`graft build --deep\` first`);
       process.exit(1);
@@ -1539,9 +1540,15 @@ claudeMd
     }
     // The file Trail read, or a new CLAUDE.md when the repo had none.
     const rel = pulled.path || "CLAUDE.md";
-    const file = join(repo, rel);
-    const { existsSync, readFileSync, writeFileSync } = await import("node:fs");
-    const before = existsSync(file) ? readFileSync(file, "utf8") : "";
+    const target = pullTarget(repo, pulled.path);
+    if ("error" in target) {
+      console.error(`✗ ${target.error}`);
+      process.exitCode = 1;
+      return;
+    }
+    const file = target.file;
+    const { readFileInside, writeFileInside } = await import("./util/safe-fs.js");
+    const before = readFileInside(repo, file) ?? "";
     const result = applyChanges(before, pulled.changes);
 
     for (const c of result.written) console.error(`  + ${c.kind === "add" ? "new section" : "edit"} · ${c.heading}`);
@@ -1552,7 +1559,7 @@ claudeMd
       console.error(`· dry run: ${result.written.length} change(s) would be written to ${rel}; nothing was written`);
       return;
     }
-    if (result.written.length > 0) writeFileSync(file, result.text);
+    if (result.written.length > 0) writeFileInside(repo, file, result.text);
     // Written now or already there: either way the page should stop listing it.
     const done = [...result.written, ...result.present].map((c) => c.id);
     const told = await markApplied(link, done);

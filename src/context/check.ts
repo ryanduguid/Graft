@@ -18,7 +18,7 @@ import { contentHash } from "../util/id.js";
 import { relPosix } from "../util/paths.js";
 import { readSourceFile } from "../util/source.js";
 import { CODE_EXTENSIONS, listContextFiles } from "./build.js";
-import { contextDirFor, readManifest, readNodes } from "./node-file.js";
+import { assertRealContextDir, contextDirFor, readManifest, readNodes } from "./node-file.js";
 
 export interface CheckResult {
   ok: boolean;
@@ -38,6 +38,7 @@ export interface CheckOptions {
 export function checkContext(dir: string, opts: CheckOptions = {}): CheckResult {
   const root = resolve(dir);
   const outDir = contextDirFor(root, opts.contextDir);
+  assertRealContextDir(root, outDir);
   const exts = opts.extensions ?? CODE_EXTENSIONS;
 
   const result: CheckResult = {
@@ -130,6 +131,7 @@ export interface FreshnessResult {
 export function indexFreshness(dir: string, opts: CheckOptions = {}): FreshnessResult | null {
   const root = resolve(dir);
   const outDir = contextDirFor(root, opts.contextDir);
+  assertRealContextDir(root, outDir);
   const manifest = readManifest(outDir);
   if (!manifest) return null;
   let missing = 0;

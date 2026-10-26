@@ -13,6 +13,9 @@
  * change is reported and left, never guessed at. Same rules as Trail's own
  * ComposeClaudeMd, which is what the page's preview shows.
  */
+import { lstatSync } from "node:fs";
+import { isAgentInstructionPath } from "../app/sources.js";
+import { resolveInside } from "../util/safe-fs.js";
 import { baseUrlFor, type BrainLink } from "./link.js";
 
 /** One accepted change, as Trail sends it. */
@@ -63,9 +66,36 @@ export async function fetchAcceptedChanges(
     }
     if (!res.ok) return { error: `Trail refused the pull: ${res.status} ${body.slice(0, 200)}` };
     const parsed = JSON.parse(body) as Partial<ClaudeMdPull>;
+    if (parsed.path != null && typeof parsed.path !== "string") return { error: "Trail sent a malformed file path" };
     return { path: parsed.path ?? "", head_sha: parsed.head_sha ?? "", changes: parsed.changes ?? [] };
   } catch (e) {
     return { error: `could not reach Trail: ${e instanceof Error ? e.message : e}` };
+  }
+}
+
+/**
+ * The file a pull may edit: the instruction file Trail says it read (CLAUDE.md
+ * when the repo had none), resolved inside `repo`. `path` is a server response, so
+ * it must name one of the instruction files graft uploads, stay inside the repo
+ * and cross no symlink — anything else, `../` or a hook or config file included,
+ * writes nothing.
+ */
+export function pullTarget(repo: string, path: string): { file: string } | { error: string } {
+  // One normalised form for both the allowlist and the filesystem: on POSIX a
+  // backslash is a filename character, not the separator the allowlist assumed.
+  const rel = (path || "CLAUDE.md").split("\\").join("/");
+  const refused = { error: `Trail named ${JSON.stringify(path)}, which is not this repo's own instruction file; nothing was written` };
+  if (!isAgentInstructionPath(rel)) return refused;
+  try {
+    const file = resolveInside(repo, rel);
+    try {
+      if (!lstatSync(file).isFile()) return refused;
+    } catch (e) {
+      if ((e as NodeJS.ErrnoException).code !== "ENOENT") throw e;
+    }
+    return { file };
+  } catch {
+    return refused;
   }
 }
 
