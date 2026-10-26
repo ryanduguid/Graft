@@ -17,6 +17,8 @@
  * the tree — the committed-content threat — but not a local process swapping a
  * component between check and use. Closing that needs a native fd-relative walk.
  */
+/* eslint-disable security/detect-non-literal-fs-filename -- this module is the path
+   validator: every path it hands to fs is the one being checked, or one it built. */
 import { constants, copyFileSync, lstatSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
@@ -37,8 +39,8 @@ export function resolveInside(base: string, target: string): string {
   }
   const parts = rel === "" ? [] : rel.split(sep);
   let cur = root;
-  for (let i = 0; i < parts.length; i++) {
-    cur = join(cur, parts[i]);
+  for (const [i, part] of parts.entries()) {
+    cur = join(cur, part);
     let st;
     try {
       st = lstatSync(cur);
@@ -83,7 +85,9 @@ export function writeFileInside(base: string, path: string, data: string | Uint8
   const abs = resolve(base, path);
   ensureDirInside(base, dirname(abs));
   if (opts.atomic) {
-    replaceAtomically(abs, (tmp) => writeFileSync(tmp, data, { flag: "wx" }));
+    replaceAtomically(abs, (tmp) => {
+      writeFileSync(tmp, data, { flag: "wx" });
+    });
     return abs;
   }
   if (isSymlink(abs)) rmSync(abs);
@@ -97,12 +101,15 @@ export function writeFileInside(base: string, path: string, data: string | Uint8
 export function copyFileInside(base: string, src: string, dest: string): string {
   const abs = resolve(base, dest);
   ensureDirInside(base, dirname(abs));
-  replaceAtomically(abs, (tmp) => copyFileSync(src, tmp, constants.COPYFILE_EXCL));
+  replaceAtomically(abs, (tmp) => {
+    copyFileSync(src, tmp, constants.COPYFILE_EXCL);
+  });
   return abs;
 }
 
 /** Fill a fresh, unpredictably named sibling of `abs`, then rename it over `abs`:
  * the rename replaces a symlink leaf rather than following it. */
+// eslint-disable-next-line no-unused-vars -- a parameter name inside a function type
 function replaceAtomically(abs: string, fill: (tmp: string) => void): void {
   const tmp = `${abs}.${process.pid}.${randomBytes(6).toString("hex")}.tmp`;
   try {
