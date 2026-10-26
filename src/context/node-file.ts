@@ -114,7 +114,7 @@ export function contextDirFor(root: string, override?: string): string {
   // symlinked one here, once, so the context dir's parent is a trustworthy base for
   // every reader and writer below it (they check the context dir itself onwards).
   const dir = resolve(override);
-  if (trustedBaseFor(root, dir) === root) resolveInside(root, dirname(dir));
+  resolveInside(trustedBaseFor(root, dir), dirname(dir));
   return dir;
 }
 

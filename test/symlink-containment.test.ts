@@ -22,7 +22,7 @@ import {
   utimesSync,
   writeFileSync,
 } from "node:fs";
-import { basename, join, relative } from "node:path";
+import { basename, dirname, join, relative } from "node:path";
 import { BracketSynthesizer, PassthroughSummarizer, tmpRepo } from "./helpers.js";
 import { resolveInside } from "../src/util/safe-fs.js";
 import { buildGraph } from "../src/graph/build.js";
@@ -429,6 +429,19 @@ test("a seeded worktree still gets the parent's graph and sidecars", (t) => {
     readFileSync(join(main, "graft", ".graph", "wiring.json"), "utf8"),
   );
   assert.ok(existsSync(fingerprintPath(join(wt, "graft"))));
+});
+
+test("a --dir spelled through another name for the repo root is still checked from it", async (t) => {
+  const { repo, outside } = sandbox(t);
+  linkDir(outside, join(repo, "tools"));
+  // Stands in for a case-insensitive alias or macOS /tmp -> /private/tmp: lexically
+  // outside the repo, yet the same directory.
+  const alias = join(dirname(repo), "alias");
+  linkDir(repo, alias);
+  const contextDir = join(alias, "tools", "ctx");
+  assert.throws(() => contextDirFor(repo, contextDir), /symlink/);
+  await assert.rejects(buildGraph(repo, { contextDir }), /symlink/);
+  assert.deepEqual(readdirSync(outside), []);
 });
 
 test("a repo-internal --dir or GRAFT_DIR may not pass through a symlinked directory", (t) => {

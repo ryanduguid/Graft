@@ -47,7 +47,7 @@ export function resolveContextDir(projectDir: string): string {
   // Same rule as `contextDirFor`: absolute, and a repo-internal override may not
   // pass through a symlinked directory the repository controls.
   const dir = resolve(projectDir, override);
-  if (trustedBaseFor(projectDir, dir) === projectDir) resolveInside(projectDir, dirname(dir));
+  resolveInside(trustedBaseFor(projectDir, dir), dirname(dir));
   return dir;
 }
 

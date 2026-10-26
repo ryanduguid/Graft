@@ -19,7 +19,7 @@
  */
 /* eslint-disable security/detect-non-literal-fs-filename -- this module is the path
    validator: every path it hands to fs is the one being checked, or one it built. */
-import { constants, copyFileSync, lstatSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from "node:fs";
+import { constants, copyFileSync, lstatSync, mkdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
@@ -59,11 +59,24 @@ export function resolveInside(base: string, target: string): string {
  * when `dir` sits inside it, so every repository-controlled component between them
  * is checked (the default `graft/`, or a relative `--dir`/`GRAFT_DIR`), else `dir`'s
  * own parent, which the operator chose.
+ *
+ * A `dir` spelled through another name for `root` (different case on a
+ * case-insensitive volume, or a linked ancestor such as macOS `/tmp`) is still
+ * inside: the base is then that ancestor, in `dir`'s own spelling, so the checks
+ * below it walk the same components the operation will.
  */
 export function trustedBaseFor(root: string, dir: string): string {
   const rel = relative(resolve(root), resolve(dir));
   const inside = rel !== "" && rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
-  return inside ? root : dirname(dir);
+  if (inside) return root;
+  const id = statSync(root, { bigint: true, throwIfNoEntry: false });
+  if (id && id.ino !== 0n) {
+    for (let cur = dirname(resolve(dir)), up = dirname(cur); cur !== up; cur = up, up = dirname(cur)) {
+      const st = statSync(cur, { bigint: true, throwIfNoEntry: false });
+      if (st && st.dev === id.dev && st.ino === id.ino) return cur;
+    }
+  }
+  return dirname(dir);
 }
 
 /** {@link resolveInside} for a directory, creating whatever part of it is missing.
