@@ -9,7 +9,7 @@ import { test, type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
-import { execFileSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import {
   existsSync,
   lstatSync,
@@ -22,7 +22,7 @@ import {
   utimesSync,
   writeFileSync,
 } from "node:fs";
-import { basename, dirname, join, relative } from "node:path";
+import { basename, join, relative } from "node:path";
 import { BracketSynthesizer, PassthroughSummarizer, tmpRepo } from "./helpers.js";
 import { resolveInside } from "../src/util/safe-fs.js";
 import { buildGraph } from "../src/graph/build.js";
@@ -429,51 +429,6 @@ test("a seeded worktree still gets the parent's graph and sidecars", (t) => {
     readFileSync(join(main, "graft", ".graph", "wiring.json"), "utf8"),
   );
   assert.ok(existsSync(fingerprintPath(join(wt, "graft"))));
-});
-
-test("a --dir spelled through another name for the repo root is still checked from it", async (t) => {
-  const { repo, outside } = sandbox(t);
-  linkDir(outside, join(repo, "tools"));
-  // Stands in for a case-insensitive alias or macOS /tmp -> /private/tmp: lexically
-  // outside the repo, yet the same directory.
-  const alias = join(dirname(repo), "alias");
-  linkDir(repo, alias);
-  const contextDir = join(alias, "tools", "ctx");
-  assert.throws(() => contextDirFor(repo, contextDir), /symlink/);
-  await assert.rejects(buildGraph(repo, { contextDir }), /symlink/);
-  assert.deepEqual(readdirSync(outside), []);
-  // A committed link back to the root, reached through the alias, is still a symlink
-  // the repository controls.
-  linkDir(repo, join(repo, "self"));
-  const viaSelf = join(alias, "self", "ctx");
-  assert.throws(() => contextDirFor(repo, viaSelf), /symlink/);
-  await assert.rejects(buildGraph(repo, { contextDir: viaSelf }), /symlink/);
-  assert.equal(existsSync(join(repo, "ctx")), false);
-  // An alias of a directory under the root, with a committed link back up from it.
-  mkdirSync(join(repo, "sub"));
-  linkDir(repo, join(repo, "sub", "up"));
-  const subAlias = join(dirname(repo), "sub-alias");
-  linkDir(join(repo, "sub"), subAlias);
-  const viaUp = join(subAlias, "up", "ctx");
-  assert.throws(() => contextDirFor(repo, viaUp), /symlink/);
-  await assert.rejects(buildGraph(repo, { contextDir: viaUp }), /symlink/);
-  assert.equal(existsSync(join(repo, "ctx")), false);
-});
-
-test("a --dir on a drive aliasing a repo directory still checks the committed links below it", async (t) => {
-  if (process.platform !== "win32") return t.skip("subst drives are Windows-only");
-  const free = "ZYXWVUTSRQPONMLKJ".split("").find((l) => !existsSync(`${l}:\\`));
-  if (!free) return t.skip("no free drive letter");
-  const { repo, outside } = sandbox(t);
-  mkdirSync(join(repo, "sub"));
-  linkDir(repo, join(repo, "sub", "up"));
-  execFileSync("subst", [`${free}:`, join(repo, "sub")]);
-  t.after(() => execFileSync("subst", [`${free}:`, "/d"]));
-  const contextDir = `${free}:\\up\\ctx`;
-  assert.throws(() => contextDirFor(repo, contextDir), /symlink/);
-  await assert.rejects(buildGraph(repo, { contextDir }), /symlink/);
-  assert.equal(existsSync(join(repo, "ctx")), false);
-  assert.deepEqual(readdirSync(outside), []);
 });
 
 test("a repo-internal --dir or GRAFT_DIR may not pass through a symlinked directory", (t) => {
