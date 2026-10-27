@@ -19,7 +19,7 @@
  */
 /* eslint-disable security/detect-non-literal-fs-filename -- this module is the path
    validator: every path it hands to fs is the one being checked, or one it built. */
-import { constants, copyFileSync, lstatSync, mkdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { type BigIntStats, constants, copyFileSync, lstatSync, mkdirSync, readFileSync, realpathSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { randomBytes } from "node:crypto";
 import { dirname, isAbsolute, join, relative, resolve, sep } from "node:path";
 
@@ -60,26 +60,44 @@ export function resolveInside(base: string, target: string): string {
  * is checked (the default `graft/`, or a relative `--dir`/`GRAFT_DIR`), else `dir`'s
  * own parent, which the operator chose.
  *
- * A `dir` spelled through another name for `root` (different case on a
- * case-insensitive volume, or a linked ancestor such as macOS `/tmp`) is still
- * inside: the base is then that ancestor, in `dir`'s own spelling, so the checks
- * below it walk the same components the operation will.
+ * A `dir` spelled through another name for the repository (different case on a
+ * case-insensitive volume, a linked ancestor such as macOS `/tmp`, or a link to
+ * the root or a directory under it) is still inside. The base is then the shortest
+ * prefix of `dir`, in its own spelling, that resolves into the repository: that
+ * prefix is an entry outside the repository, which the operator controls, and
+ * every component below it is a repository entry the checks walk.
  */
 export function trustedBaseFor(root: string, dir: string): string {
   const rel = relative(resolve(root), resolve(dir));
   const inside = rel !== "" && rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
   if (inside) return root;
-  // The outermost match: a nearer one can be a committed link back to the root
-  // (`self -> .`), which the checks below the outermost one still see.
-  let alias: string | undefined;
   const id = statSync(root, { bigint: true, throwIfNoEntry: false });
   if (id && id.ino !== 0n) {
+    const prefixes: string[] = [];
     for (let cur = dirname(resolve(dir)), up = dirname(cur); cur !== up; cur = up, up = dirname(cur)) {
-      const st = statSync(cur, { bigint: true, throwIfNoEntry: false });
-      if (st && st.dev === id.dev && st.ino === id.ino) alias = cur;
+      prefixes.unshift(cur);
+    }
+    for (const prefix of prefixes) {
+      let real: string;
+      try {
+        real = realpathSync.native(prefix);
+      } catch {
+        break; // nothing below a missing prefix exists to follow
+      }
+      if (isSameOrUnder(real, id)) return prefix;
     }
   }
-  return alias ?? dirname(dir);
+  return dirname(dir);
+}
+
+/** Whether the real path `real`, or one of its ancestors, is the directory `id`
+ * names; compared by device and inode, so case and aliases do not matter. */
+function isSameOrUnder(real: string, id: BigIntStats): boolean {
+  for (let cur = real, up = dirname(cur); ; cur = up, up = dirname(cur)) {
+    const st = statSync(cur, { bigint: true, throwIfNoEntry: false });
+    if (st && st.dev === id.dev && st.ino === id.ino) return true;
+    if (cur === up) return false;
+  }
 }
 
 /** {@link resolveInside} for a directory, creating whatever part of it is missing.
