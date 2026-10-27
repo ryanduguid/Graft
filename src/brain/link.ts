@@ -12,7 +12,8 @@
  * repository, and two checkouts of different repos on one machine must not
  * share one.
  */
-import { readBuildConfig, patchBuildConfig, cacheDir, readJson, writeJsonAtomic } from '../util/state.js';
+import { readBuildConfig, patchBuildConfig, cacheDir, readJson, resolveContextDir, writeJsonAtomic } from '../util/state.js';
+import { trustedBaseFor } from '../util/safe-fs.js';
 import { join } from 'node:path';
 import { ensureGitignored, LINK_NOTE } from '../context/node-file.js';
 import { BUILD_CONFIG_DIR } from '../util/state.js';
@@ -108,12 +109,16 @@ export function rulesCachePath(dir: string): string {
   return join(cacheDir(dir), 'brain-rules.json');
 }
 
+/** The cache sits under the repo's `graft/`, whose components the repository
+ * controls: read and write it only through real directories, never a symlink. */
+const rulesCacheBase = (dir: string): string => trustedBaseFor(dir, resolveContextDir(dir));
+
 export function readRulesCache(dir: string): RulesCache | null {
-  return readJson<RulesCache>(rulesCachePath(dir));
+  return readJson<RulesCache>(rulesCachePath(dir), rulesCacheBase(dir));
 }
 
 export function writeRulesCache(dir: string, cache: RulesCache): void {
-  writeJsonAtomic(rulesCachePath(dir), cache, true);
+  writeJsonAtomic(rulesCachePath(dir), cache, true, rulesCacheBase(dir));
 }
 
 /**

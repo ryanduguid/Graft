@@ -17,9 +17,9 @@
  * code. `stale` is a meaning-layer signal the last build already recorded.
  * `pending` (never summarized) is not drift — it's a deliberate Tier-1-only build.
  */
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { relPosix } from "../util/paths.js";
-import { contextDirFor } from "../context/node-file.js";
+import { assertRealContextDir, contextDirFor } from "../context/node-file.js";
 import { extractFile, languageOf } from "./extract.js";
 import { extractGeneric, genericLangOf, warmGenericGrammars } from "./generic.js";
 import { containerLangOf, extractContainer, warmContainerGrammars } from "./container.js";
@@ -61,6 +61,7 @@ export async function checkGraph(
 ): Promise<GraphCheckResult> {
   const root = resolve(dir);
   const outDir = contextDirFor(root, opts.contextDir);
+  assertRealContextDir(root, outDir);
 
   const result: GraphCheckResult = {
     ok: false,
@@ -74,7 +75,7 @@ export async function checkGraph(
     nodes: 0,
   };
 
-  const committed = readGraph(wiringPath(outDir));
+  const committed = readGraph(wiringPath(outDir), dirname(outDir));
   if (!committed) {
     result.missing = true;
     return result;

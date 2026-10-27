@@ -33,7 +33,7 @@
  */
 import { existsSync } from "node:fs";
 import { join, resolve } from "node:path";
-import { contextDirFor } from "../context/node-file.js";
+import { assertRealContextDir, contextDirFor } from "../context/node-file.js";
 import { acquireLockIn, releaseLockIn } from "../util/state.js";
 import { CACHE_DIR } from "../context/node-file.js";
 import { buildGraph } from "./build.js";
@@ -152,6 +152,7 @@ export async function ensureFreshGraph(root: string, opts: RefreshOptions = {}):
   try {
     const dir = resolve(root);
     const outDir = contextDirFor(dir, opts.contextDir);
+    assertRealContextDir(dir, outDir); // no lock, seed or rebuild through a symlink
     let seededFrom: string | undefined;
     if (!existsSync(wiringPath(outDir))) {
       // One case has a graph to work with even though this checkout has none: a git
