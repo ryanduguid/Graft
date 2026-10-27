@@ -73,9 +73,12 @@ export function trustedBaseFor(root: string, dir: string): string {
   if (inside) return root;
   const id = statSync(root, { bigint: true, throwIfNoEntry: false });
   if (id && id.ino !== 0n) {
+    // Every prefix down from the filesystem root, which can itself be an alias (a
+    // subst drive, a mount point).
     const prefixes: string[] = [];
-    for (let cur = dirname(resolve(dir)), up = dirname(cur); cur !== up; cur = up, up = dirname(cur)) {
+    for (let cur = dirname(resolve(dir)); ; cur = dirname(cur)) {
       prefixes.unshift(cur);
+      if (dirname(cur) === cur) break;
     }
     for (const prefix of prefixes) {
       let real: string;

@@ -9,7 +9,7 @@ import { test, type TestContext } from "node:test";
 import assert from "node:assert/strict";
 import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import {
   existsSync,
   lstatSync,
@@ -458,6 +458,22 @@ test("a --dir spelled through another name for the repo root is still checked fr
   assert.throws(() => contextDirFor(repo, viaUp), /symlink/);
   await assert.rejects(buildGraph(repo, { contextDir: viaUp }), /symlink/);
   assert.equal(existsSync(join(repo, "ctx")), false);
+});
+
+test("a --dir on a drive aliasing a repo directory still checks the committed links below it", async (t) => {
+  if (process.platform !== "win32") return t.skip("subst drives are Windows-only");
+  const free = "ZYXWVUTSRQPONMLKJ".split("").find((l) => !existsSync(`${l}:\\`));
+  if (!free) return t.skip("no free drive letter");
+  const { repo, outside } = sandbox(t);
+  mkdirSync(join(repo, "sub"));
+  linkDir(repo, join(repo, "sub", "up"));
+  execFileSync("subst", [`${free}:`, join(repo, "sub")]);
+  t.after(() => execFileSync("subst", [`${free}:`, "/d"]));
+  const contextDir = `${free}:\\up\\ctx`;
+  assert.throws(() => contextDirFor(repo, contextDir), /symlink/);
+  await assert.rejects(buildGraph(repo, { contextDir }), /symlink/);
+  assert.equal(existsSync(join(repo, "ctx")), false);
+  assert.deepEqual(readdirSync(outside), []);
 });
 
 test("a repo-internal --dir or GRAFT_DIR may not pass through a symlinked directory", (t) => {
