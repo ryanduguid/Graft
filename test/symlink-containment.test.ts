@@ -442,6 +442,13 @@ test("a --dir spelled through another name for the repo root is still checked fr
   assert.throws(() => contextDirFor(repo, contextDir), /symlink/);
   await assert.rejects(buildGraph(repo, { contextDir }), /symlink/);
   assert.deepEqual(readdirSync(outside), []);
+  // A committed link back to the root, reached through the alias, is still a symlink
+  // the repository controls.
+  linkDir(repo, join(repo, "self"));
+  const viaSelf = join(alias, "self", "ctx");
+  assert.throws(() => contextDirFor(repo, viaSelf), /symlink/);
+  await assert.rejects(buildGraph(repo, { contextDir: viaSelf }), /symlink/);
+  assert.equal(existsSync(join(repo, "ctx")), false);
 });
 
 test("a repo-internal --dir or GRAFT_DIR may not pass through a symlinked directory", (t) => {

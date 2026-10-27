@@ -69,14 +69,17 @@ export function trustedBaseFor(root: string, dir: string): string {
   const rel = relative(resolve(root), resolve(dir));
   const inside = rel !== "" && rel !== ".." && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
   if (inside) return root;
+  // The outermost match: a nearer one can be a committed link back to the root
+  // (`self -> .`), which the checks below the outermost one still see.
+  let alias: string | undefined;
   const id = statSync(root, { bigint: true, throwIfNoEntry: false });
   if (id && id.ino !== 0n) {
     for (let cur = dirname(resolve(dir)), up = dirname(cur); cur !== up; cur = up, up = dirname(cur)) {
       const st = statSync(cur, { bigint: true, throwIfNoEntry: false });
-      if (st && st.dev === id.dev && st.ino === id.ino) return cur;
+      if (st && st.dev === id.dev && st.ino === id.ino) alias = cur;
     }
   }
-  return dirname(dir);
+  return alias ?? dirname(dir);
 }
 
 /** {@link resolveInside} for a directory, creating whatever part of it is missing.
