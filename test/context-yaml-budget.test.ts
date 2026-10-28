@@ -8,7 +8,7 @@ import { tmpRepo } from "./helpers.js";
 function parseNode(frontmatter: string) {
   const dir = tmpRepo("yaml-budget");
   try {
-    writeFileSync(join(dir, "sample.md"), `---\n${frontmatter}---\n\n# Fixture\n`);
+    writeFileSync(join(dir, "sample.md"), `---\n${frontmatter}---\n\n# Hello, friend\n`);
     return readNodes(dir);
   } finally {
     rmSync(dir, { recursive: true, force: true });
