@@ -5,7 +5,7 @@
  * injected results instead of hitting the network from tests.
  */
 import { existsSync, readFileSync } from "node:fs";
-import { execFileSync, spawnSync } from "node:child_process";
+import { spawnSync, type SpawnSyncOptions } from "node:child_process";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { toPosixPath } from "./util/paths.js";
@@ -42,6 +42,17 @@ export function isRunningViaNpx(moduleUrl: string): boolean {
   return toPosixPath(fileURLToPath(moduleUrl)).includes("/_npx/");
 }
 
+/** Runs `npm <args>`. On Windows `npm` is the `npm.cmd` shim, which only a shell
+ * can start: spawned directly it fails with ENOENT, so `graft version` read
+ * "unreachable", the update check stored nothing and `graft upgrade` never ran.
+ * The shell gets one joined command line because Node 24 warns (DEP0190) when it
+ * has to join args for a shell. Every arg here is a fixed token, never user input. */
+function npmSync(args: readonly string[], options: SpawnSyncOptions) {
+  return process.platform === "win32"
+    ? spawnSync(["npm", ...args].join(" "), { ...options, shell: true })
+    : spawnSync("npm", args, options);
+}
+
 export interface NpmViewResult {
   ok: boolean;
   version?: string;
@@ -51,13 +62,13 @@ export interface NpmViewResult {
  * timeout) resolves to `{ ok: false }` rather than throwing. */
 export function getNpmViewVersion(pkgName: string = PKG_NAME, timeoutMs = 2000): NpmViewResult {
   try {
-    const res = spawnSync("npm", ["view", pkgName, "version"], {
+    const res = npmSync(["view", pkgName, "version"], {
       encoding: "utf8",
       timeout: timeoutMs,
       windowsHide: true,
     });
     if (res.error || res.signal || res.status !== 0) return { ok: false };
-    const version = res.stdout?.trim();
+    const version = res.stdout?.toString().trim();
     if (!version) return { ok: false };
     return { ok: true, version };
   } catch {
@@ -81,12 +92,13 @@ export function formatVersionReport(current: string, latest: NpmViewResult): str
 /** The global npm node_modules dir (handles Homebrew/Windows/volta layouts). */
 function globalRoot(): string | null {
   try {
-    const root = execFileSync("npm", ["root", "-g"], {
+    const res = npmSync(["root", "-g"], {
       encoding: "utf8",
       stdio: ["ignore", "pipe", "ignore"],
-      shell: process.platform === "win32",
-    }).trim();
-    return root || null;
+      windowsHide: true,
+    });
+    if (res.error || res.status !== 0) return null;
+    return res.stdout?.toString().trim() || null;
   } catch {
     return null;
   }
@@ -140,7 +152,7 @@ export function runUpgrade(moduleUrl: string): UpgradeResult {
   if (isRunningViaNpx(moduleUrl)) {
     return { ran: false, ok: true, oldVersion };
   }
-  const res = spawnSync("npm", ["install", "-g", `${PKG_NAME}@latest`], { stdio: "inherit" });
+  const res = npmSync(["install", "-g", `${PKG_NAME}@latest`], { stdio: "inherit" });
   if (res.error || (res.status ?? 1) !== 0) {
     return { ran: true, ok: false, oldVersion, errorMessage: res.error?.message };
   }
