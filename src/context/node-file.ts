@@ -22,7 +22,7 @@
  * LLM and without re-reading every node body.
  */
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, isAbsolute, join, resolve } from "node:path";
 import matter from "gray-matter";
 import { contentHash, normalizeName } from "../util/id.js";
 import { relPosix, stripTrailingSlashes } from "../util/paths.js";
@@ -124,6 +124,16 @@ export function assertRealContextDir(root: string, outDir: string): void {
   resolveInside(trustedBaseFor(root, outDir), outDir);
 }
 
+/** `contextDir` relative to `root` as a posix path, or null when it is not strictly inside
+ *  `root`: the root itself, above it, or elsewhere. On Windows a dir on another drive has no
+ *  relative path, so `relative` returns the absolute target (`C:/Users/x/out`), which
+ *  starts with neither `..` nor a separator and would pass a `startsWith("..")` test. */
+function repoRelativeDir(root: string, contextDir: string): string | null {
+  const rel = relPosix(root, contextDir);
+  if (rel === "" || rel === ".." || rel.startsWith("../") || isAbsolute(rel) || /^[A-Za-z]:/.test(rel)) return null;
+  return rel;
+}
+
 /**
  * Make sure the repo's root `.gitignore` ignores the graft output dir. The
  * graph is a local, regenerable cache (like `node_modules`), not a committed
@@ -141,8 +151,8 @@ export const LINK_NOTE = "graft's brain link — holds a read token, never commi
 
 export function ensureGitignored(root: string, contextDir: string, note = GRAPH_CACHE_NOTE): void {
   if (envTruthy("GRAFT_NO_GITIGNORE")) return;
-  const rel = relPosix(root, contextDir);
-  if (rel === "" || rel.startsWith("..")) return; // dir is at/above the repo root — nothing sane to ignore
+  const rel = repoRelativeDir(root, contextDir);
+  if (rel === null) return; // dir is at/above the repo root, or outside it — nothing sane to ignore
   const bare = stripTrailingSlashes(rel); // "graft" (or a `--dir` subpath like "tools/ctx")
   // Root-ANCHORED, so it ignores exactly this repo's `graft/` and not a directory named
   // `graft` at any depth. An unanchored `graft/` also matched `.claude/skills/graft/`, so
@@ -187,8 +197,8 @@ export function ensureGitignored(root: string, contextDir: string, note = GRAPH_
  */
 export function ensureSearchable(root: string, contextDir: string): void {
   if (envTruthy("GRAFT_NO_IGNORE")) return;
-  const rel = relPosix(root, contextDir);
-  if (rel === "" || rel.startsWith("..")) return; // outside the repo — nothing to re-admit
+  const rel = repoRelativeDir(root, contextDir);
+  if (rel === null) return; // outside the repo — nothing to re-admit
   const dir = stripTrailingSlashes(rel);
   const entry = `!${dir}/`;
   let path: string;
