@@ -46,11 +46,11 @@ export function isRunningViaNpx(moduleUrl: string): boolean {
  * can start: spawned directly it fails with ENOENT, so `graft version` read
  * "unreachable", the update check stored nothing and `graft upgrade` never ran.
  * The shell gets one joined command line because Node 24 warns (DEP0190) when it
- * has to join args for a shell. Every arg here is a fixed token, never user input. */
+ * has to join args for a shell. Every arg here is a fixed token, never user input,
+ * and `npm` is found on PATH exactly as when the user runs it. */
 function npmSync(args: readonly string[], options: SpawnSyncOptions) {
-  return process.platform === "win32"
-    ? spawnSync(["npm", ...args].join(" "), { ...options, shell: true })
-    : spawnSync("npm", args, options);
+  const win = process.platform === "win32";
+  return spawnSync(win ? ["npm", ...args].join(" ") : "npm", win ? [] : args, { ...options, shell: win }); // NOSONAR: npm from PATH is intended
 }
 
 export interface NpmViewResult {
