@@ -211,11 +211,11 @@ test("walkDir collects a large nested subtree outside Git without dropping paths
 
 /**
  * The crash this guards against needs a child subtree larger than V8's argument
- * cap (~128k), which is a real cost to set up: ~2.5s to create the files on
- * Linux. CI also runs windows-latest, where creating that many files is far
- * slower, so this is POSIX-only — the cheap semantic test above runs everywhere.
+ * cap (~128k), which is a real cost to set up: ~2.5s on Linux and ~35s on
+ * Windows to create the files. It runs on Windows too, where graft is used daily
+ * and the walker is the same code.
  */
-test("walkDir survives a subtree larger than V8's argument limit (#314)", { skip: process.platform === "win32" ? "POSIX-only: file creation cost on Windows CI" : false }, () => {
+test("walkDir survives a subtree larger than V8's argument limit (#314)", () => {
   const dir = mkdtempSync(join(tmpdir(), "graft-walk-argcap-"));
 
   try {
