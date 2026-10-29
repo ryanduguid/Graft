@@ -50,6 +50,7 @@ export function isRunningViaNpx(moduleUrl: string): boolean {
  * and `npm` is found on PATH exactly as when the user runs it. */
 function npmSync(args: readonly string[], options: SpawnSyncOptions) {
   const win = process.platform === "win32";
+  // nosemgrep: javascript.lang.security.audit.spawn-shell-true.spawn-shell-true -- fixed npm tokens only
   return spawnSync(win ? ["npm", ...args].join(" ") : "npm", win ? [] : args, { ...options, shell: win }); // NOSONAR: npm from PATH is intended
 }
 
