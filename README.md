@@ -8,16 +8,16 @@
 
 <p>
   <a href="https://github.com/NanoNets/Graft"><img src="https://img.shields.io/github/stars/NanoNets/Graft?style=flat&logo=github&logoColor=E5E4E2&label=Star%20on%20GitHub&color=66023C&labelColor=000000" /></a>
-  <a href="https://trailhq.com/graft"><img src="https://img.shields.io/badge/website-trailhq.com/graft-E5484D?style=flat&labelColor=000000&color=66023C" /></a>
-  <a href="https://discord.gg/zxmKweAA29"><img src="https://img.shields.io/badge/Discord-join-5865F2?style=flat&logo=discord&logoColor=E5E4E2&labelColor=000000&color=66023C" /></a>
+  <a href="https://trailhq.com/graft"><img src=".github/assets/badges/website.svg" /></a>
+  <a href="https://discord.gg/zxmKweAA29"><img src=".github/assets/badges/discord.svg" /></a>
   <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/v/%40nanonets%2Fgraft?style=flat&logo=npm&logoColor=E5E4E2&label=npm&labelColor=000000&color=66023C" /></a>
   <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/dm/%40nanonets%2Fgraft?style=flat&logo=npm&logoColor=E5E4E2&label=downloads&labelColor=000000&color=66023C" /></a>
   <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/%40nanonets%2Fgraft?style=flat&logo=nodedotjs&logoColor=E5E4E2&labelColor=000000&color=66023C" /></a>
-  <img src="https://img.shields.io/badge/TypeScript-strict-3178C6?style=flat&logo=typescript&logoColor=E5E4E2&labelColor=000000&color=66023C" />
-  <img src="https://img.shields.io/badge/License-MIT-20C997?style=flat&labelColor=000000&color=66023C" />
-  <a href="TELEMETRY.md"><img src="https://img.shields.io/badge/telemetry-anonymous%2C%20opt--out-546FFF?style=flat&labelColor=000000&color=66023C" /></a>
+  <img src=".github/assets/badges/typescript.svg" />
+  <img src=".github/assets/badges/license.svg" />
+  <a href="TELEMETRY.md"><img src=".github/assets/badges/telemetry.svg" /></a>
   <a href="https://scorecard.dev/viewer/?uri=github.com/NanoNets/Graft"><img src="https://img.shields.io/ossf-scorecard/github.com/NanoNets/Graft?style=flat&label=openssf%20scorecard&labelColor=000000" /></a>
-  <a href="https://app.trailhq.com/get-started?step=repo"><img src="https://img.shields.io/badge/Trail-try%20it-E5484D?style=flat&logoColor=white&labelColor=000000&color=66023C" /></a>
+  <a href="https://app.trailhq.com/get-started?step=repo"><img src=".github/assets/badges/trail.svg" /></a>
 </p>
 
 ### Up to **4× cheaper** and **3× faster**, with better or no loss of correctness.
@@ -35,8 +35,8 @@
 
 <div align="center">
 
-[![Fork code quality](https://img.shields.io/codacy/grade/63ab68177c924303a16ef0d6a2b2dd54/main?style=flat&labelColor=000000)](https://app.codacy.com/gh/ryanduguid/Graft/dashboard)
-[![Fork CI](https://img.shields.io/github/actions/workflow/status/ryanduguid/Graft/ci.yml?branch=main&label=CI&style=flat&labelColor=000000)](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml)
+[![Fork code quality](https://app.codacy.com/project/badge/Grade/63ab68177c924303a16ef0d6a2b2dd54?branch=main)](https://app.codacy.com/gh/ryanduguid/Graft/dashboard)
+[![Fork CI](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/ryanduguid/Graft/actions/workflows/ci.yml)
 
 </div>
 
@@ -51,7 +51,7 @@
 </p>
 
 <p align="center">
-  <a href="https://app.trailhq.com/get-started?step=repo"><img src="https://img.shields.io/badge/Try%20it%20on%20your%20repo%20%E2%86%92-E5484D?style=flat&labelColor=000000&color=66023C" alt="Try it on your repo" height="34"/></a>
+  <a href="https://app.trailhq.com/get-started?step=repo"><img src=".github/assets/badges/try-it-on-your-repo.svg" alt="Try it on your repo" height="34"/></a>
 </p>
 
 <p align="center">
