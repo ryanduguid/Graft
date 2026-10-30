@@ -16,7 +16,7 @@
   <img src=".github/assets/badges/typescript.svg" />
   <img src=".github/assets/badges/license.svg" />
   <a href="TELEMETRY.md"><img src=".github/assets/badges/telemetry.svg" /></a>
-  <a href="https://scorecard.dev/viewer/?uri=github.com/NanoNets/Graft"><img src="https://img.shields.io/ossf-scorecard/github.com/NanoNets/Graft?style=flat&label=openssf%20scorecard&labelColor=000000" /></a>
+  <a href="https://scorecard.dev/viewer/?uri=github.com/NanoNets/Graft"><img src="https://raw.githubusercontent.com/ryanduguid/.github/badges/NanoNets/Graft.svg" /></a>
   <a href="https://app.trailhq.com/get-started?step=repo"><img src=".github/assets/badges/trail.svg" /></a>
 </p>
 
