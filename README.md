@@ -7,12 +7,12 @@
 <a href="https://trendshift.io/repositories/92209?utm_source=trendshift-badge&utm_medium=badge&utm_campaign=badge-trendshift-92209" target="_blank" rel="noopener noreferrer"><img src="https://img.shields.io/badge/dynamic/xml?url=https%3A%2F%2Ftrendshift.io%2Fapi%2Fbadge%2Ftrendshift%2Frepositories%2F92209%2Fdaily%3Flanguage%3DTypeScript&query=%2F%2F*%5Blocal-name%28%29%3D%27text%27%5D%5Bcontains%28.%2C+%27Repository+Of+The+Day%27%29%5D&label=Trendshift+%C2%B7+TypeScript&style=flat&labelColor=000000&color=66023C" alt="trailhq/Graft | Trendshift" height="20"/></a>
 
 <p>
-  <a href="https://github.com/NanoNets/Graft"><img src="https://img.shields.io/github/stars/NanoNets/Graft?style=flat&logo=github&logoColor=E5E4E2&label=Star%20on%20GitHub&color=66023C&labelColor=000000" /></a>
+  <a href="https://github.com/NanoNets/Graft"><img src="https://badgen.net/github/stars/NanoNets/Graft?label=Star%20on%20GitHub&icon=github&color=66023C&labelColor=000000" /></a>
   <a href="https://trailhq.com/graft"><img src=".github/assets/badges/website.svg" /></a>
   <a href="https://discord.gg/zxmKweAA29"><img src=".github/assets/badges/discord.svg" /></a>
-  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/v/%40nanonets%2Fgraft?style=flat&logo=npm&logoColor=E5E4E2&label=npm&labelColor=000000&color=66023C" /></a>
-  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://img.shields.io/npm/dm/%40nanonets%2Fgraft?style=flat&logo=npm&logoColor=E5E4E2&label=downloads&labelColor=000000&color=66023C" /></a>
-  <a href="https://nodejs.org"><img src="https://img.shields.io/node/v/%40nanonets%2Fgraft?style=flat&logo=nodedotjs&logoColor=E5E4E2&labelColor=000000&color=66023C" /></a>
+  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://badgen.net/npm/v/@nanonets/graft?label=npm&icon=npm&color=66023C&labelColor=000000" /></a>
+  <a href="https://www.npmjs.com/package/@nanonets/graft"><img src="https://badgen.net/npm/dm/@nanonets/graft?label=downloads&icon=npm&color=66023C&labelColor=000000" /></a>
+  <a href="https://nodejs.org"><img src="https://badgen.net/npm/node/@nanonets/graft?label=node&color=66023C&labelColor=000000" /></a>
   <img src=".github/assets/badges/typescript.svg" />
   <img src=".github/assets/badges/license.svg" />
   <a href="TELEMETRY.md"><img src=".github/assets/badges/telemetry.svg" /></a>
