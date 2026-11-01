@@ -24,9 +24,11 @@ function fakeInstall(root: string, name: string, version: string): string {
   writeFileSync(join(pkg, 'package.json'), JSON.stringify({ name: '@nanonets/graft', version }));
   // CJS on purpose: no "type" field, so `import()` hands back module.exports and
   // `m.main(...)` resolves — same shape the real dist has for the shim's call.
+  // The marker is the install's own package.json version, read at run time, so
+  // the hook's source is fixed text rather than code built from a value.
   writeFileSync(
     join(distClaude, 'hooks.js'),
-    `module.exports.main = () => require('node:fs').writeFileSync(process.env.MARKER, ${JSON.stringify(version)});\n`,
+    `module.exports.main = () => require('node:fs').writeFileSync(process.env.MARKER, require('../../package.json').version);\n`,
   );
   return distClaude;
 }

@@ -182,3 +182,51 @@ test("healthz: reports what the process is doing", async () => {
     await app.close();
   }
 });
+
+test("brain routes: a failure tells the caller an Error's message, and nothing else that was thrown", async () => {
+  const logged: string[] = [];
+  let thrown: unknown;
+  const app = createApp(
+    {
+      appId: "1",
+      privateKey: privateKey.export({ type: "pkcs1", format: "pem" }).toString(),
+      webhookSecret: secret,
+      brainBuildSecret: "build-secret",
+      publicUrl: "http://localhost",
+      log: (msg) => logged.push(msg),
+    },
+    {
+      fetch: async () => ({ ok: false, status: 500, text: async () => "no network in tests" }),
+      brainAccess: async () => {
+        throw thrown;
+      },
+      brainBuild: async () => {
+        throw thrown;
+      },
+    },
+  );
+  app.server.listen(0);
+  const url = `http://127.0.0.1:${(app.server.address() as AddressInfo).port}`;
+  const ask = (route: string) =>
+    fetch(`${url}/brain/${route}`, {
+      method: "POST",
+      headers: { authorization: "Bearer build-secret" },
+      body: JSON.stringify({ owner: "o", repo: "r" }),
+    });
+  try {
+    for (const route of ["access", "build"]) {
+      thrown = new Error("clone refused");
+      let res = await ask(route);
+      assert.equal(res.status, 502, route);
+      assert.deepEqual(await res.json(), { error: "clone refused" }, route);
+
+      thrown = "Error: boom\n    at fsociety (/srv/graft/src/app/brain-build.ts:1:1)";
+      res = await ask(route);
+      assert.equal(res.status, 502, route);
+      assert.deepEqual(await res.json(), { error: "internal error" }, `${route}: a thrown non-Error stays out of the response`);
+      assert.ok(logged.some((m) => m.startsWith(`brain ${route} o/r failed:`) && m.includes("fsociety")), `${route}: but reaches the log`);
+    }
+  } finally {
+    await new Promise<void>((r) => app.server.close(() => r()));
+  }
+});
