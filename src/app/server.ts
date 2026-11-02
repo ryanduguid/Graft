@@ -188,7 +188,7 @@ export function createApp(
       } catch (e) {
         const msg = e instanceof Error ? e.message : String(e);
         log(`brain access ${ask.owner}/${ask.repo} failed: ${msg}`);
-        return send(res, 502, "application/json", JSON.stringify({ error: msg }));
+        return send(res, 502, "application/json", JSON.stringify({ error: callerMessage(e) }));
       }
     }
 
@@ -245,7 +245,7 @@ export function createApp(
         }
         const msg = e instanceof Error ? e.message : String(e);
         log(`brain build ${job.owner}/${job.repo} failed: ${msg}`);
-        return send(res, 502, "application/json", JSON.stringify({ error: msg }));
+        return send(res, 502, "application/json", JSON.stringify({ error: callerMessage(e) }));
       }
     }
 
@@ -260,6 +260,10 @@ const header = (req: IncomingMessage, name: string): string | undefined => {
   const v = req.headers[name];
   return Array.isArray(v) ? v[0] : v;
 };
+
+/** What a failed route tells its caller. An Error's message is written to be read;
+ * anything else thrown has no known shape, so it reaches the log and not the response. */
+const callerMessage = (e: unknown): string => (e instanceof Error ? e.message : "internal error");
 
 /** Constant-time `Authorization: Bearer <secret>` check. */
 function bearerMatches(headerValue: string | undefined, secret: string): boolean {
