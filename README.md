@@ -40,6 +40,8 @@
 
 </div>
 
+ryanduguid/Graft is [Ryan Duguid](https://duguid.com.au/)'s fork of [trailhq/Trail-Code](https://github.com/trailhq/Trail-Code), adding symlink containment and Windows and Node 20 fixes for Graft users who need those changes. Upstream sync is on hold, so the fork lags Trail-Code.
+
 <p align="center">
   <b>Stop repeating yourself to your coding agent.</b><br/>
   You correct it, and by the next session it has forgotten. Trail manages your CLAUDE.md and AGENTS.md so it doesn't.
